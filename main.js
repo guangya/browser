@@ -1,14 +1,24 @@
 const { app, BrowserWindow } = require('electron');
 
+if(require('electron-squirrel-startup')) {
+    return app.quit();
+}
 
+const { updateElectronApp } = require('update-electron-app');
 
 const createWindow = () => {
     const win = new BrowserWindow({
-      width: 800,
-      height: 600
+        width: 800,
+        height: 600,
+        frame: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            webviewTag: true
+        }
     })
   
     win.loadFile('index.html');
+    // win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
@@ -32,7 +42,7 @@ app.on('window-all-closed', () => {
 function checkUpdates() {
     return new Promise((resolve, reject) => {
         // Electron 官方手册用法：require('update-electron-app')()
-        // 这个会报错：TypeError: require(...) is not a function
-        require('update-electron-app').updateElectronApp();
+        // 会报错：TypeError: require(...) is not a function，新版的导出内容不一样了
+        updateElectronApp();
     });
 }

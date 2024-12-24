@@ -1,16 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-    <h2>这是第三个版本</h2>
-  </body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Browser</title>
+        <link rel="stylesheet" href="index.css" />
+    </head>
+    <body>
+        <div id="app">
+            <div id="header">
+                <div id="tab-bar">
+                    <div id="tab-container" draggable="true" style="-webkit-app-region: drag;">
+                        <ul>
+                            <li class="tab-header-item">
+                                <div>新建标签页</div>
+                            </li>
+                            <li class="tab-header-item current">
+                                <div>百度一下，你就知道</div>
+                            </li>
+                            <li class="tab-header-item">
+                                <div>新建标签页</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="window-buttons">
+                        <div class="window-button window-min">
+                            <img src="assets/window-min-svgrepo-com.svg" style="margin-top:-5px;"/>
+                        </div>
+                        <div class="window-button window-restore">
+                            <img src="assets/window-restore-svgrepo-com.svg"/>
+                        </div>
+                        <div class="window-button window-close">
+                            <!-- 为了方便修改图标颜色，这里直接使用 svg 标签，而不是通过 img 引入 -->
+                            <svg viewBox="0 0 36 36" version="1.1"  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <title>window-close-line</title>
+                                <path d="M19.41,18l7.29-7.29a1,1,0,0,0-1.41-1.41L18,16.59,10.71,9.29a1,1,0,0,0-1.41,1.41L16.59,18,9.29,25.29a1,1,0,1,0,1.41,1.41L18,19.41l7.29,7.29a1,1,0,0,0,1.41-1.41Z" class="clr-i-outline clr-i-outline-path-1"></path>
+                                <rect x="0" y="0" width="36" height="36" fill-opacity="0"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="address-bar">
+                    <div id="nav-buttons">
+                        <div class="nav-button-item"><img src="assets/back-svgrepo-com.svg"/></div>
+                        <div class="nav-button-item"><img src="assets/right-svgrepo-com.svg"/></div>
+                        <div class="nav-button-item"><img src="assets/refresh-right-svgrepo-com.svg"/></div>
+                    </div>
+                    <div id="address">
+                        <div id="address-input-wrapper">
+                            <input id="address-input" value="https://www.baidu.com" spellcheck="false" />
+                        </div>
+                    </div>
+                    <div id="browser-actions">
+                        <div class="browser-action-item">
+                            <img src="assets/setting-config-svgrepo-com.svg"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="content">
+                <webview style="width: 100%; height: 100%;" src="https://www.baidu.com"></webview>
+            </div>
+        </div>
+        <script type="text/javascript" src="jquery-3.7.1.min.js"></script>
+        <script type="text/javascript" src="index.js"></script>
+    </body>
 </html>
