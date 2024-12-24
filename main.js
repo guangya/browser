@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const path = require('node:path')
 
 if(require('electron-squirrel-startup')) {
     return app.quit();
@@ -13,12 +14,13 @@ const createWindow = () => {
         frame: false,
         autoHideMenuBar: true,
         webPreferences: {
-            webviewTag: true
+            webviewTag: true,
+            preload: path.join(__dirname, 'preload.js')
         }
     })
   
     win.loadFile('index.html');
-    // win.webContents.openDevTools();
+    if (!app.isPackaged) win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
@@ -29,7 +31,22 @@ app.whenReady().then(() => {
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
+
+    ipcMain.on('main-window-close', confirmQuitApp);
 });
+
+async function confirmQuitApp() {
+    let options = {
+        title: '提示',
+        type: 'warning',
+        message: '确定要退出程序吗？',
+        noLink: true,
+        buttons: ['确定', '取消'],
+        defaultId: 1,
+    };
+    let result = await dialog.showMessageBox(options);
+    if (result.response === 0) app.quit();
+}
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
