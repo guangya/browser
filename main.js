@@ -13,13 +13,16 @@ const createWindow = () => {
         height: 600,
         frame: false,
         autoHideMenuBar: true,
+        show: false, // 等窗口创建完成后再手动切换到显示
         webPreferences: {
             webviewTag: true,
             preload: path.join(__dirname, 'preload.js')
         }
-    })
-  
+    });
+
+    win.maximize();
     win.loadFile('index.html');
+    
     if (!app.isPackaged) win.webContents.openDevTools();
 }
 
@@ -32,10 +35,37 @@ app.whenReady().then(() => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 
-    ipcMain.on('main-window-close', confirmQuitApp);
+    ipcMain.on('window-min', windowMinListener);
+    ipcMain.handle('window-max', windowMaxHandle);
+    ipcMain.handle('window-restore', windowRestoreHandle);
+    ipcMain.on('window-close', windowCloseListener);
 });
 
-async function confirmQuitApp() {
+function windowMinListener(event) {
+    const webContents = event.sender;
+    const win = BrowserWindow.fromWebContents(webContents);
+    win.minimize();
+    event.returnValue = true;
+    return true;
+}
+
+function windowMaxHandle(event) {
+    const webContents = event.sender;
+    const win = BrowserWindow.fromWebContents(webContents);
+    win.maximize();
+    event.returnValue = true;
+    return true;
+}
+
+function windowRestoreHandle(event) {
+    const webContents = event.sender;
+    const win = BrowserWindow.fromWebContents(webContents);
+    win.unmaximize();
+    event.returnValue = true;
+    return true;
+}
+
+async function windowCloseListener(event) {
     let options = {
         title: '提示',
         type: 'warning',
@@ -45,7 +75,11 @@ async function confirmQuitApp() {
         defaultId: 1,
     };
     let result = await dialog.showMessageBox(options);
-    if (result.response === 0) app.quit();
+    if (result.response === 0) {
+        const webContents = event.sender;
+        const win = BrowserWindow.fromWebContents(webContents);
+        win.close();
+    }
 }
 
 app.on('window-all-closed', () => {
