@@ -38,7 +38,7 @@ html,body{padding: 0; margin: 0; width: 100%; height: 100%; overflow: hidden; bo
     fill: #fac8cd;
 }
 
-#window-buttons .window-button.window-max{
+#window-buttons .window-button.window-restore{
     display: none;
 }
 

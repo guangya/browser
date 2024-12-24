@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, screen } = require('electron');
 const path = require('node:path')
 
 if(require('electron-squirrel-startup')) {
@@ -8,20 +8,26 @@ if(require('electron-squirrel-startup')) {
 const { updateElectronApp } = require('update-electron-app');
 
 const createWindow = () => {
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width, height } = primaryDisplay.bounds;
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: width,
+        height: height,
         frame: false,
         autoHideMenuBar: true,
-        show: false, // 等窗口创建完成后再手动切换到显示
+        show: false,
         webPreferences: {
             webviewTag: true,
             preload: path.join(__dirname, 'preload.js')
         }
     });
 
-    win.maximize();
     win.loadFile('index.html');
+    
+    // 等 DOM 元素 ready 之后再显示窗口，避免闪屏
+    win.webContents.on('dom-ready', function() {
+        win.show();
+    });
     
     if (!app.isPackaged) win.webContents.openDevTools();
 }
